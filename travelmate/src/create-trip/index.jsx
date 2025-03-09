@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { SelectBudgetOptions, SelectTravelersList } from "@/constants/options";
 import React, { useEffect, useState } from "react";
 import ReactGoogleAutocomplete from "react-google-autocomplete";
+import { toast } from "sonner";
 
 function CreateTrip() {
   const [place, setPlace] = useState();
@@ -10,8 +11,6 @@ function CreateTrip() {
   const [formData, setFormData] = useState([]);
 
   const handleInputChange = (name, value) => {
-
-    
     setFormData({
       ...formData,
       [name]: value,
@@ -23,12 +22,24 @@ function CreateTrip() {
   }, [formData]);
 
   const onGenerateTrip = () => {
-    if(formData?.noOfDays > 5){
-      alert('Please enter a valid number of days');
+    if (
+      (formData?.noOfDays > 5 && !formData?.location) ||
+      !formData?.noOfDays ||
+      !formData?.budget ||
+      !formData?.people
+    ) {
+      toast("Please fill all details", {
+        style: {
+          background: "white",
+          border: "1px solid #E5E7EB",
+          borderRadius: "8px",
+          color: "#374151",
+        },
+      });
+
       return;
     }
   };
-
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
@@ -55,16 +66,16 @@ function CreateTrip() {
               types: ["(cities)"],
             }}
           />
-          
         </div>
         <div>
           <h2 className="text-xl my-3 font-medium">
             How many days are you planning your trip? 📅
           </h2>
-          <Input placeholder="Enter number of days" type="number" 
-           onChange={(e)=>handleInputChange('noOfDays', e.target.value)}
+          <Input
+            placeholder="Enter number of days"
+            type="number"
+            onChange={(e) => handleInputChange("noOfDays", e.target.value)}
           />
-         
         </div>
 
         <div>
@@ -75,7 +86,7 @@ function CreateTrip() {
                 key={index}
                 onClick={() => handleInputChange("budget", item.title)}
                 className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg
-                  ${formData.budget === item.title&&'shadow-lg border-black'}
+                  ${formData.budget === item.title && "shadow-lg border-black"}
                   `}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
@@ -96,7 +107,7 @@ function CreateTrip() {
                 key={index}
                 onClick={() => handleInputChange("people", item.people)}
                 className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg
-                  ${formData.people === item.people&&'shadow-lg border-black'}
+                  ${formData.people === item.people && "shadow-lg border-black"}
                   `}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
